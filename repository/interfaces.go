@@ -1,4 +1,4 @@
-package impa
+package repository
 
 import (
 	"context"

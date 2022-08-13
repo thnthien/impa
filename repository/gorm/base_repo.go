@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/thnthien/impa"
+	"github.com/thnthien/impa/constant"
 	"github.com/thnthien/impa/entity"
 )
 
@@ -21,7 +21,7 @@ func NewBaseRepo[E entity.IEntity](db *gorm.DB) *BaseRepo {
 }
 
 func (b *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
-	db, ok := ctx.Value(impa.CtxDBKey).(*gorm.DB)
+	db, ok := ctx.Value(constant.CtxDBKey).(*gorm.DB)
 	if !ok {
 		return b.db
 	}
