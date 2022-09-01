@@ -1,4 +1,4 @@
-package baserepo
+package mongodbrepository
 
 import (
 	"reflect"

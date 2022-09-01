@@ -1,4 +1,4 @@
-package baserepo
+package mongodbrepository
 
 import (
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,6 +13,7 @@ type BaseRepo struct {
 func NewBaseRepo(db *mongo.Database, client *mongo.Client, collection *mongo.Collection) *BaseRepo {
 	return &BaseRepo{
 		db:         db,
+		client:     client,
 		collection: collection,
 	}
 }
