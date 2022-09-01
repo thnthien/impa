@@ -6,20 +6,20 @@ import (
 	"github.com/thnthien/impa/entity"
 )
 
-type BulkInsertBaseRepo[Struct entity.IEntity, K any] struct {
+type BulkInsertBaseRepo[E entity.IEntity, K any] struct {
 	*BaseRepo
 }
 
-func NewBulkInsertBaseRepo[Struct entity.IEntity, K any](baseRepo *BaseRepo) *BulkInsertBaseRepo[Struct, K] {
-	return &BulkInsertBaseRepo[Struct, K]{baseRepo}
+func NewBulkInsertBaseRepo[E entity.IEntity, K any](baseRepo *BaseRepo) *BulkInsertBaseRepo[E, K] {
+	return &BulkInsertBaseRepo[E, K]{baseRepo}
 }
 
-func (b *InsertBaseRepo[Struct, K]) BulkInsert(ctx context.Context, es []Struct) ([]*Struct, error) {
+func (b *InsertBaseRepo[E, K]) BulkInsert(ctx context.Context, es []E) ([]*E, error) {
 	err := b.GetDB(ctx).Create(&es).Error
 	if err != nil {
 		return nil, err
 	}
-	pointers := make([]*Struct, 0, len(es))
+	pointers := make([]*E, 0, len(es))
 	for i := range es {
 		pointers = append(pointers, &es[i])
 	}

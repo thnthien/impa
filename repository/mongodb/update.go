@@ -8,15 +8,15 @@ import (
 	"github.com/thnthien/impa/entity"
 )
 
-type UpdateRepo[E entity.IEntity] struct {
+type UpdateRepo[E entity.IEntity, K any] struct {
 	*BaseRepo
 }
 
-func NewUpdateRepo[E entity.IEntity](base *BaseRepo) *UpdateRepo[E] {
-	return &UpdateRepo[E]{base}
+func NewUpdateRepo[E entity.IEntity, K any](base *BaseRepo) *UpdateRepo[E, K] {
+	return &UpdateRepo[E, K]{base}
 }
 
-func (r *UpdateRepo[E]) Update(ctx context.Context, obj *E) error {
+func (r *UpdateRepo[E, K]) Update(ctx context.Context, obj *E) error {
 	beforeUpdate(obj)
 	id := getID(obj)
 	_, err := r.collection.UpdateOne(ctx, getIdFilter(id), bson.M{"$set": obj})

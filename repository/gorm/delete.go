@@ -7,15 +7,15 @@ import (
 	"github.com/thnthien/impa/entity"
 )
 
-type DeleteBaseRepo[Struct entity.IEntity, K any] struct {
+type DeleteBaseRepo[E entity.IEntity, K any] struct {
 	*BaseRepo
 }
 
-func NewDeleteBaseRepo[Struct entity.IEntity, K any](baseRepo *BaseRepo) *DeleteBaseRepo[Struct, K] {
-	return &DeleteBaseRepo[Struct, K]{baseRepo}
+func NewDeleteBaseRepo[E entity.IEntity, K any](baseRepo *BaseRepo) *DeleteBaseRepo[E, K] {
+	return &DeleteBaseRepo[E, K]{baseRepo}
 }
 
-func (b *DeleteBaseRepo[Struct, K]) Delete(ctx context.Context, id K) error {
-	var obj Struct
+func (b *DeleteBaseRepo[E, K]) Delete(ctx context.Context, id K) error {
+	var obj E
 	return b.GetDB(ctx).Delete(&obj, fmt.Sprintf("%s = ?", b.IDField), id).Error
 }

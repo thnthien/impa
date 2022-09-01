@@ -10,16 +10,16 @@ import (
 	"github.com/thnthien/impa/entity"
 )
 
-type FindByIDBaseRepo[Struct entity.IEntity, K any] struct {
+type FindByIDBaseRepo[E entity.IEntity, K any] struct {
 	*BaseRepo
 }
 
-func NewFindByIDBaseRepo[Struct entity.IEntity, K any](baseRepo *BaseRepo) *FindByIDBaseRepo[Struct, K] {
-	return &FindByIDBaseRepo[Struct, K]{baseRepo}
+func NewFindByIDBaseRepo[E entity.IEntity, K any](baseRepo *BaseRepo) *FindByIDBaseRepo[E, K] {
+	return &FindByIDBaseRepo[E, K]{baseRepo}
 }
 
-func (b *FindByIDBaseRepo[Struct, K]) FindByID(ctx context.Context, id K) (*Struct, error) {
-	obj := new(Struct)
+func (b *FindByIDBaseRepo[E, K]) FindByID(ctx context.Context, id K) (*E, error) {
+	obj := new(E)
 	err := b.GetDB(ctx).First(obj, fmt.Sprintf("%s = ?", b.IDField), id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

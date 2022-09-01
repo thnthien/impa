@@ -6,14 +6,14 @@ import (
 	"github.com/thnthien/impa/entity"
 )
 
-type InsertBaseRepo[Struct entity.IEntity, K any] struct {
+type InsertBaseRepo[E entity.IEntity, K any] struct {
 	*BaseRepo
 }
 
-func NewInsertBaseRepo[Struct entity.IEntity, K any](baseRepo *BaseRepo) *InsertBaseRepo[Struct, K] {
-	return &InsertBaseRepo[Struct, K]{baseRepo}
+func NewInsertBaseRepo[E entity.IEntity, K any](baseRepo *BaseRepo) *InsertBaseRepo[E, K] {
+	return &InsertBaseRepo[E, K]{baseRepo}
 }
 
-func (b *InsertBaseRepo[Struct, K]) Insert(ctx context.Context, e *Struct) error {
+func (b *InsertBaseRepo[E, K]) Insert(ctx context.Context, e *E) error {
 	return b.GetDB(ctx).Create(e).Error
 }
