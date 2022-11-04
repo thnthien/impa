@@ -3,6 +3,7 @@ module github.com/thnthien/impa
 go 1.18
 
 require (
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/satori/go.uuid v1.2.0
 	go.mongodb.org/mongo-driver v1.10.1
 	gorm.io/gorm v1.23.8
