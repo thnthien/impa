@@ -12,6 +12,9 @@ import (
 
 func getValueAndType(obj any) (reflect.Value, reflect.Type) {
 	v := reflect.ValueOf(obj)
+	if obj == nil || (v.Kind() == reflect.Ptr && v.IsNil()) {
+		return v, nil
+	}
 	t := reflect.TypeOf(obj)
 
 	if t.Kind() == reflect.Pointer {
@@ -25,39 +28,90 @@ func getValueAndType(obj any) (reflect.Value, reflect.Type) {
 }
 
 func getID(obj any) any {
-	v, t := getValueAndType(obj)
+	v, _ := getValueAndType(obj)
+
+	id := v.FieldByName("ID")
+	if !id.IsZero() {
+		return id.Interface()
+	}
 
 	for i := 0; i < v.NumField(); i++ {
-		name := t.Field(i).Name
-		if name == "ID" {
-			return v.Field(i).Interface()
+		field := v.Field(i)
+		if field.Kind() != reflect.Struct {
+			continue
+		}
+		id = field.FieldByName("ID")
+		if !id.IsZero() {
+			return id.Interface()
 		}
 	}
+
 	return nil
+}
+
+func structName(obj any) string {
+	_, t := getValueAndType(obj)
+	return t.Name()
 }
 
 func beforeCreate(obj any) {
 	v, t := getValueAndType(obj)
+	if t == nil {
+		return
+	}
 
-	now := time.Now()
+	var now *time.Time
 
 	for i := 0; i < v.NumField(); i++ {
+		if !t.Field(i).IsExported() {
+			continue
+		}
 		name := t.Field(i).Name
-		if name == "CreatedAt" || name == "UpdatedAt" {
-			v.Field(i).Set(reflect.ValueOf(now))
+		switch v.Field(i).Kind() {
+		case reflect.Struct:
+			sName := structName(v.Field(i).Interface())
+			if sName == "Time" && (name == "CreatedAt" || name == "UpdatedAt") {
+				if now == nil {
+					n := time.Now()
+					now = &n
+				}
+				v.Field(i).Set(reflect.ValueOf(*now))
+			} else {
+				beforeCreate(v.Field(i).Addr().Interface())
+			}
+		case reflect.Pointer:
+			beforeCreate(v.Field(i).Interface())
 		}
 	}
 }
 
 func beforeUpdate(obj any) {
 	v, t := getValueAndType(obj)
+	if t == nil {
+		return
+	}
 
-	now := time.Now()
+	var now *time.Time
 
 	for i := 0; i < v.NumField(); i++ {
+		if !t.Field(i).IsExported() {
+			continue
+		}
 		name := t.Field(i).Name
-		if name == "UpdatedAt" {
-			v.Field(i).Set(reflect.ValueOf(now))
+		switch v.Field(i).Kind() {
+		case reflect.Struct:
+			sName := structName(v.Field(i).Interface())
+			if sName == "Time" && name == "UpdatedAt" {
+				if now == nil {
+					n := time.Now()
+					now = &n
+				}
+				v.Field(i).Set(reflect.ValueOf(*now))
+			} else {
+				beforeUpdate(v.Field(i).Addr().Interface())
+			}
+		case reflect.Pointer:
+			beforeUpdate(v.Field(i).Interface())
 		}
 	}
 }
