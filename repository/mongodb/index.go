@@ -54,7 +54,7 @@ func structName(obj any) string {
 	return t.Name()
 }
 
-func beforeCreate(obj any) {
+func beforeCreate(obj any, idGenerator func() any) {
 	v, t := getValueAndType(obj)
 	if t == nil {
 		return
@@ -77,10 +77,14 @@ func beforeCreate(obj any) {
 				}
 				v.Field(i).Set(reflect.ValueOf(*now))
 			} else {
-				beforeCreate(v.Field(i).Addr().Interface())
+				beforeCreate(v.Field(i).Addr().Interface(), idGenerator)
 			}
 		case reflect.Pointer:
-			beforeCreate(v.Field(i).Interface())
+			beforeCreate(v.Field(i).Interface(), idGenerator)
+		default:
+			if (name == "ID" || name == "Id") && idGenerator() != nil {
+				v.Field(i).Set(reflect.ValueOf(idGenerator()))
+			}
 		}
 	}
 }

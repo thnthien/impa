@@ -5,9 +5,10 @@ import (
 )
 
 type BaseRepo struct {
-	db         *mongo.Database
-	client     *mongo.Client
-	collection *mongo.Collection
+	db          *mongo.Database
+	client      *mongo.Client
+	collection  *mongo.Collection
+	idGenerator func() any
 }
 
 func NewBaseRepo(db *mongo.Database, client *mongo.Client, collection *mongo.Collection) *BaseRepo {
@@ -28,4 +29,8 @@ func (r *BaseRepo) GetClient() *mongo.Client {
 
 func (r *BaseRepo) GetCollection() *mongo.Collection {
 	return r.collection
+}
+
+func (r *BaseRepo) SetIdGenerator(f func() any) {
+	r.idGenerator = f
 }

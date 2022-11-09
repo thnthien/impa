@@ -15,7 +15,7 @@ func NewInsertRepo[E entity.IEntity, K any](base *BaseRepo) *InsertRepo[E, K] {
 }
 
 func (r *InsertRepo[E, K]) Insert(ctx context.Context, obj *E) error {
-	beforeCreate(obj)
+	beforeCreate(obj, r.idGenerator)
 	_, err := r.collection.InsertOne(ctx, obj)
 	if err != nil {
 		return err
