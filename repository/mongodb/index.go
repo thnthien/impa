@@ -60,6 +60,10 @@ func beforeCreate(obj any, idGenerator func() any) {
 		return
 	}
 
+	if v.Kind() != reflect.Struct {
+		return
+	}
+
 	var now *time.Time
 
 	for i := 0; i < v.NumField(); i++ {
